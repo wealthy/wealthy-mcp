@@ -21,7 +21,7 @@ This repository contains MCP server that provides integration with multiple tool
 You can either install from source or download pre-built artifacts:
 
 ### Option 1: Install from Source
-- Clone the repository:
+- Install using golang(go 1.23 or later):
    ```bash
    go install github.com/wealthy/wealthy-mcp@latest
    ```
@@ -30,24 +30,21 @@ You can either install from source or download pre-built artifacts:
 - Visit our [releases page](https://github.com/wealthy/wealthy-mcp/releases) to download the latest pre-built binary for your platform
 - Extract the downloaded archive and place the executable in a directory that's in your system PATH
 
-### Configure MCP Client
--  open Claude/Cursor mcp config
-- Install wealthy mcp server:
-   ```bash
-   go install github.com/wealthy/wealthy-mcp@latest
-   ```
--  Open Claude/Cursor mcp config
+## MCP Cursor/Claude Configuration
 
-    add below json 
-     ```
-    {
-     "mcpServers": {
-      "falcon": {
-                "command": "mcp_server"
-            }
-        }
+To configure MCP (Multi-Cursor Protocol) servers, create a `.cursor/mcp.json` file in your home directory with the following structure:
+
+```json
+{
+    "mcpServers": {
+      "wealthy-mcp": {
+        "command": "mcp_server"
+      }
     }
-     ```
+}
+``` 
+
+
 -  Restart Claude/Cursor
 - Wealthy login page will be opened, enter wealthy credentials and after successful login, return to Claude/Cursor
 - We have setup wealthy mcp server now you are ready to do some smart trading 🎉
@@ -191,20 +188,3 @@ By using this software, you acknowledge that:
 
 For support, please open an issue in the GitHub repository or contact the maintainers. 
 
-
-## MCP Cursor Configuration
-
-To configure MCP (Multi-Cursor Protocol) servers, create a `.cursor/mcp.json` file in your home directory with the following structure:
-
-```json
-{
-    "mcpServers": {
-      "wealthy-mcp": {
-        "url": "http://localhost:8006/sse",
-        "env": {
-          "apiKey": "wealthy-api-key"
-        }
-      }
-    }
-}
-``` 
