@@ -199,10 +199,10 @@ func callRestAPI(ctx context.Context, httpReq *http.Request, resp any, client *h
 	httpResp, err := client.Do(httpReq)
 	if err != nil {
 		slog.Error("failed to get trade ideas", "error", err)
-		return fmt.Errorf("failed to get trade ideas: %w", err)
+		return fmt.Errorf("network error: %w", err)
 	}
 	if httpResp.StatusCode < 200 || httpResp.StatusCode >= 300 {
-		return fmt.Errorf("failed to get trade ideas: %w", err)
+		return fmt.Errorf("response status code: %d", httpResp.StatusCode)
 	}
 	defer httpResp.Body.Close()
 	if err := json.NewDecoder(httpResp.Body).Decode(&resp); err != nil {
