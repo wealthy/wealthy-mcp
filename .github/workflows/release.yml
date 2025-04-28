@@ -1,54 +1,78 @@
 name: Build and Release
-
 on:
   push:
     tags:
       - 'v*' # Run workflow on version tags, e.g. v1.0.0
-
 jobs:
   build:
     name: Build and Release
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        arch: [amd64, arm64]
         include:
           - os: ubuntu-latest
-            artifact_name: wealthy-mcp-linux
-            asset_name: wealthy-mcp-linux-amd64
+            arch: amd64
+            artifact_name: wealthy-mcp-linux-amd64
+          - os: ubuntu-latest
+            arch: arm64
+            artifact_name: wealthy-mcp-linux-arm64
           - os: macos-latest
-            artifact_name: wealthy-mcp-macos
-            asset_name: wealthy-mcp-macos-amd64
-          # - os: windows-latest
-          #   artifact_name: wealthy-mcp-windows.exe
-          #   asset_name: wealthy-mcp-windows-amd64.exe
-
+            arch: amd64
+            artifact_name: wealthy-mcp-macos-amd64
+          - os: macos-latest
+            arch: arm64
+            artifact_name: wealthy-mcp-macos-arm64
+          - os: windows-latest
+            arch: amd64
+            artifact_name: wealthy-mcp-windows-amd64.exe
+          - os: windows-latest
+            arch: arm64
+            artifact_name: wealthy-mcp-windows-arm64.exe
+        exclude:
+          # GitHub Actions doesn't support arm64 runners for Linux yet,
+          # so we'll use cross-compilation
+          - os: ubuntu-latest
+            arch: arm64
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+      
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.23'
-
-      - name: Build for ${{ matrix.os }}
+          go-version: '1.22'
+          
+      - name: Extract version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+      
+      - name: Build for ${{ matrix.os }} ${{ matrix.arch }}
         run: |
           mkdir -p dist
-          go build -o dist/${{ matrix.artifact_name }} ./cmd/wealthy-mcp/*.go
-
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            GOOS=windows
+          elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+            GOOS=darwin
+          else
+            GOOS=linux
+          fi
+          ARTIFACT_WITH_VERSION=${{ matrix.artifact_name }}-${{ env.VERSION }}
+          GOARCH=${{ matrix.arch }} go build -o dist/${ARTIFACT_WITH_VERSION} -ldflags="-s -w" ./cmd/wealthy-mcp/*.go
+      
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.asset_name }}
-          path: ${{ matrix.artifact_name }}
+          name: ${{ matrix.artifact_name }}-${{ env.VERSION }}
+          path: dist/${{ matrix.artifact_name }}-${{ env.VERSION }}
           
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ${{ matrix.artifact_name }}
+          files: dist/${{ matrix.artifact_name }}-${{ env.VERSION }}
           name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
