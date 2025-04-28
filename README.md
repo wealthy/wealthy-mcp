@@ -1,6 +1,7 @@
 # Wealthy MCP(Model Context Protocol) Server
 
 This repository contains official Wealthy mcp server to help users with trading platform features
+
 # MCP (Mark3 Labs Control Plane) Tools
 
 This repository contains MCP server that provides integration with multiple tools. It also provides a framework for building and integrating various tools that can be used with the MCP server.
@@ -16,6 +17,7 @@ This repository contains MCP server that provides integration with multiple tool
 
 ## Getting Started
 
+
 You can either install from source or download pre-built artifacts:
 
 ### Option 1: Install from Source
@@ -30,6 +32,12 @@ You can either install from source or download pre-built artifacts:
 
 ### Configure MCP Client
 -  open Claude/Cursor mcp config
+- Install wealthy mcp server:
+   ```bash
+   go install github.com/wealthy/wealthy-mcp@latest
+   ```
+-  Open Claude/Cursor mcp config
+
     add below json 
      ```
     {
@@ -43,6 +51,7 @@ You can either install from source or download pre-built artifacts:
 -  Restart Claude/Cursor
 - Wealthy login page will be opened, enter wealthy credentials and after successful login, return to Claude/Cursor
 - We have setup wealthy mcp server now you are ready to do some smart trading 🎉
+
 
 1. Clone the repository:
    ```bash
