@@ -39,6 +39,17 @@ To configure MCP (Multi-Cursor Protocol) servers, create a `.cursor/mcp.json` fi
     }
 }
 ``` 
+To pass custom port to server use below example
+```json
+{
+    "mcpServers": {
+      "wealthy-mcp": {
+        "command": "mcp_server",
+        "args" : ["addr=localhost:8006"]
+      }
+    }
+}
+``` 
 
 
 -  Restart Claude/Cursor
