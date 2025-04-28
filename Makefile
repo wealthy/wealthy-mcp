@@ -9,3 +9,7 @@ help: ## Show this help message
 run: ## This is used to run the application
 	go run cmd/*.go -t=sse
 
+run:
+	go run cmd/*.go -t=sse
+run:
+	go run cmd/*.go -t=sse

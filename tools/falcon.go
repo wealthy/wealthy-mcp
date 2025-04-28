@@ -8,9 +8,10 @@ package tools
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"time"
 
 	"github.com/mark3labs/mcp-go/server"
-	"github.com/wealthy/go-kit/web"
 	mcp "github.com/wealthy/wealthy-mcp"
 	"github.com/wealthy/wealthy-mcp/internal/falcon"
 	"go.uber.org/zap"
@@ -20,15 +21,12 @@ import (
 const defaultTimeout = 60
 
 var (
-	client        = web.NewHttpClient(web.WithTimeout(defaultTimeout))
-	falconService = falcon.NewFalconService(client)
+	client        = http.Client{Timeout: time.Duration(defaultTimeout) * time.Second}
+	falconService = falcon.NewFalconService(&client)
 )
 
 // validatePlaceOrderRequest validates the parameters for a place order request
 func validatePlaceOrderRequest(args falcon.FalconRequest) error {
-	if args.AccountID == "" {
-		return fmt.Errorf("account_id is required")
-	}
 	if args.TradingSymbol == "" {
 		return fmt.Errorf("trading_symbol is required")
 	}
@@ -52,20 +50,11 @@ func validateSecurityInfoRequest(args falcon.FalconRequest) error {
 	return nil
 }
 
-// validateAccountRequest validates the parameters for account-based requests
-func validateAccountRequest(accountID string) error {
-	if accountID == "" {
-		return fmt.Errorf("account_id is required")
-	}
-	return nil
-}
-
 func queryFalcon(ctx context.Context, args falcon.FalconRequest) (any, error) {
 	logger, _ := zap.NewProduction(
 		zap.WithCaller(true),
 		zap.Fields(
 			zap.String("query_type", args.QueryType),
-			zap.String("account_id", args.AccountID),
 			zap.String("trading_symbol", args.TradingSymbol),
 		),
 	)
@@ -84,18 +73,10 @@ func queryFalcon(ctx context.Context, args falcon.FalconRequest) (any, error) {
 		return falconService.PlaceOrder(ctx, args)
 
 	case "get_holdings":
-		if err := validateAccountRequest(args.AccountID); err != nil {
-			logger.Error("invalid get holdings request", zap.Error(err))
-			return nil, fmt.Errorf("invalid get holdings request: %w", err)
-		}
-		return falconService.GetHoldings(ctx, args.AccountID)
+		return falconService.GetHoldings(ctx)
 
 	case "get_positions":
-		if err := validateAccountRequest(args.AccountID); err != nil {
-			logger.Error("invalid get positions request", zap.Error(err))
-			return nil, fmt.Errorf("invalid get positions request: %w", err)
-		}
-		return falconService.GetPositions(ctx, args.AccountID)
+		return falconService.GetPositions(ctx)
 
 	case "get_security_info":
 		if err := validateSecurityInfoRequest(args); err != nil {

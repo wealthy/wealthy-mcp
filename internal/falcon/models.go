@@ -30,7 +30,6 @@ type FalconRequest struct {
 
 	// Query parameters
 	QueryType string `json:"query_type" jsonschema:"description=Type of query (place_order/get_holdings/get_positions/get_security_info/get_order_book)"`
-	AccountID string `json:"account_id,omitempty" jsonschema:"description=Account ID for queries"`
 }
 
 type Order struct {
