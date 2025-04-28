@@ -49,6 +49,7 @@ jobs:
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
       
       - name: Build for ${{ matrix.os }} ${{ matrix.arch }}
+        shell: bash
         run: |
           mkdir -p dist
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
