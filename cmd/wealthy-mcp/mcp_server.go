@@ -106,7 +106,7 @@ func main() {
 		"stdio",
 		"Transport type (stdio or sse)",
 	)
-	addr := flag.String("sse-address", "localhost:8004", "The host and port to start the sse server on")
+	addr := flag.String("addr", "localhost:8004", "The host and port to start the sse server on")
 	logLevel := flag.String("log-level", "info", "Log level (debug, info, warn, error)")
 	flag.Parse()
 
