@@ -2,10 +2,6 @@
 
 This repository contains official Wealthy mcp server to help users with trading platform features
 
-# MCP (Mark3 Labs Control Plane) Tools
-
-This repository contains MCP server that provides integration with multiple tools. It also provides a framework for building and integrating various tools that can be used with the MCP server.
-
 
 ## Prerequisites
 
@@ -23,7 +19,7 @@ You can either install from source or download pre-built artifacts:
 ### Option 1: Install from Source
 - Install using golang(go 1.23 or later):
    ```bash
-   go install github.com/wealthy/wealthy-mcp@latest
+   go install github.com/wealthy/wealthy-mcp/cmd/wealthy-mcp@latest
    ```
 
 ### Option 2: Download Pre-built Artifacts
