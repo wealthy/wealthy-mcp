@@ -11,3 +11,5 @@ run: ## This is used to run the application
 
 run:
 	go run cmd/*.go -t=sse
+run:
+	go run cmd/*.go -t=sse
