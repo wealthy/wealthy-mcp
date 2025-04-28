@@ -8,9 +8,10 @@ package tools
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"time"
 
 	"github.com/mark3labs/mcp-go/server"
-	"github.com/wealthy/go-kit/web"
 	mcp "github.com/wealthy/wealthy-mcp"
 	"github.com/wealthy/wealthy-mcp/internal/falcon"
 	"go.uber.org/zap"
@@ -20,8 +21,8 @@ import (
 const defaultTimeout = 60
 
 var (
-	client        = web.NewHttpClient(web.WithTimeout(defaultTimeout))
-	falconService = falcon.NewFalconService(client)
+	client        = http.Client{Timeout: time.Duration(defaultTimeout) * time.Second}
+	falconService = falcon.NewFalconService(&client)
 )
 
 // validatePlaceOrderRequest validates the parameters for a place order request
