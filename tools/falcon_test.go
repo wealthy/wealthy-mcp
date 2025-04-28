@@ -23,7 +23,6 @@ func TestValidatePlaceOrderRequest(t *testing.T) {
 		{
 			name: "valid request",
 			args: falcon.FalconRequest{
-				AccountID:       "ACC123",
 				TradingSymbol:   "AAPL",
 				Quantity:        100,
 				TransactionType: 1,
@@ -43,7 +42,6 @@ func TestValidatePlaceOrderRequest(t *testing.T) {
 		{
 			name: "missing trading symbol",
 			args: falcon.FalconRequest{
-				AccountID:       "ACC123",
 				Quantity:        100,
 				TransactionType: 1,
 			},
@@ -53,7 +51,6 @@ func TestValidatePlaceOrderRequest(t *testing.T) {
 		{
 			name: "invalid quantity",
 			args: falcon.FalconRequest{
-				AccountID:       "ACC123",
 				TradingSymbol:   "AAPL",
 				Quantity:        0,
 				TransactionType: 1,
@@ -64,7 +61,6 @@ func TestValidatePlaceOrderRequest(t *testing.T) {
 		{
 			name: "invalid transaction type",
 			args: falcon.FalconRequest{
-				AccountID:       "ACC123",
 				TradingSymbol:   "AAPL",
 				Quantity:        100,
 				TransactionType: 3,
@@ -123,39 +119,6 @@ func TestValidateSecurityInfoRequest(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := validateSecurityInfoRequest(tt.args)
-			if tt.wantErr {
-				assert.Error(t, err)
-				assert.Equal(t, tt.errMsg, err.Error())
-			} else {
-				assert.NoError(t, err)
-			}
-		})
-	}
-}
-
-func TestValidateAccountRequest(t *testing.T) {
-	tests := []struct {
-		name      string
-		accountID string
-		wantErr   bool
-		errMsg    string
-	}{
-		{
-			name:      "valid account ID",
-			accountID: "ACC123",
-			wantErr:   false,
-		},
-		{
-			name:      "empty account ID",
-			accountID: "",
-			wantErr:   true,
-			errMsg:    "account_id is required",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := validateAccountRequest(tt.accountID)
 			if tt.wantErr {
 				assert.Error(t, err)
 				assert.Equal(t, tt.errMsg, err.Error())

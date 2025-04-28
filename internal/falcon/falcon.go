@@ -26,8 +26,8 @@ var (
 // FalconService defines the interface for Falcon API operations
 type FalconService interface {
 	PlaceOrder(ctx context.Context, req FalconRequest) (*Order, error)
-	GetHoldings(ctx context.Context, accountID string) (any, error)
-	GetPositions(ctx context.Context, accountID string) (any, error)
+	GetHoldings(ctx context.Context) (any, error)
+	GetPositions(ctx context.Context) (any, error)
 	GetSecurityInfo(ctx context.Context, req *SecurityInfoReq) (any, error)
 	GetOrderBook(ctx context.Context) (any, error)
 	GetPrice(ctx context.Context, req *PriceReq) (any, error)
@@ -98,7 +98,7 @@ func (s *falconService) PlaceOrder(ctx context.Context, req FalconRequest) (*Ord
 }
 
 // GetHoldings retrieves holdings for an account
-func (s *falconService) GetHoldings(ctx context.Context, accountID string) (any, error) {
+func (s *falconService) GetHoldings(ctx context.Context) (any, error) {
 	url := fmt.Sprintf("%s/v1/report/holdings/", s.baseURL)
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
@@ -114,7 +114,7 @@ func (s *falconService) GetHoldings(ctx context.Context, accountID string) (any,
 }
 
 // GetPositions retrieves positions for an account
-func (s *falconService) GetPositions(ctx context.Context, accountID string) (any, error) {
+func (s *falconService) GetPositions(ctx context.Context) (any, error) {
 	url := fmt.Sprintf("%s/v0/report/positions/", s.baseURL)
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
