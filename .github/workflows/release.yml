@@ -34,7 +34,7 @@ jobs:
 
       - name: Build for ${{ matrix.os }}
         run: |
-          go build -o ${{ matrix.artifact_name }} ./cmd/*.go
+          go build -o ${{ matrix.artifact_name }} ./cmd
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
