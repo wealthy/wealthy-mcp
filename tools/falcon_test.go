@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wealthy/mcp/internal/falcon"
+	"github.com/wealthy/wealthy-mcp/internal/falcon"
 )
 
 func TestValidatePlaceOrderRequest(t *testing.T) {

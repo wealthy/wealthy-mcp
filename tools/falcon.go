@@ -11,8 +11,8 @@ import (
 
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/wealthy/go-kit/web"
-	"github.com/wealthy/mcp"
-	"github.com/wealthy/mcp/internal/falcon"
+	mcp "github.com/wealthy/wealthy-mcp"
+	"github.com/wealthy/wealthy-mcp/internal/falcon"
 	"go.uber.org/zap"
 )
 

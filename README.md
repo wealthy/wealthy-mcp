@@ -12,11 +12,11 @@ This repository contains official Wealthy mcp server to help users with trading 
 
 ## Getting Started
 
-- Clone the repository:
+- Install wealthy mcp server:
    ```bash
    go install github.com/wealthy/wealthy-mcp@latest
    ```
--  open Claude/Cursor mcp config
+-  Open Claude/Cursor mcp config
     add below json 
      ```
     {

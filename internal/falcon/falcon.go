@@ -12,7 +12,7 @@ import (
 	"net/http"
 
 	"github.com/wealthy/go-kit/web"
-	"github.com/wealthy/mcp/internal"
+	"github.com/wealthy/wealthy-mcp/internal"
 )
 
 var (

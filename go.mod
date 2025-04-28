@@ -1,4 +1,4 @@
-module github.com/wealthy/mcp
+module github.com/wealthy/wealthy-mcp
 
 go 1.23
 
