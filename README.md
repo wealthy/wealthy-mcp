@@ -12,10 +12,19 @@ This repository contains official Wealthy mcp server to help users with trading 
 
 ## Getting Started
 
+You can either install from source or download pre-built artifacts:
+
+### Option 1: Install from Source
 - Clone the repository:
    ```bash
    go install github.com/wealthy/wealthy-mcp@latest
    ```
+
+### Option 2: Download Pre-built Artifacts
+- Visit our [releases page](https://github.com/wealthy/wealthy-mcp/releases) to download the latest pre-built binary for your platform
+- Extract the downloaded archive and place the executable in a directory that's in your system PATH
+
+### Configure MCP Client
 -  open Claude/Cursor mcp config
     add below json 
      ```

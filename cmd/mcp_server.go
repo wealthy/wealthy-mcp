@@ -16,8 +16,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
-	"github.com/wealthy/mcp/internal"
-	"github.com/wealthy/mcp/tools"
+	"github.com/wealthy/wealthy-mcp/internal"
+	"github.com/wealthy/wealthy-mcp/tools"
 )
 
 func newServer() *server.MCPServer {
