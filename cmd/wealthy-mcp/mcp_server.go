@@ -52,7 +52,7 @@ func run(transport, addr string, logLevel slog.Level) error {
 		// Start HTTP server for auth in background
 		go func() {
 			if err := router.Run(addr); err != nil {
-				slog.Error("HTTP server error", "error", err)
+				panic(err)
 			}
 		}()
 
