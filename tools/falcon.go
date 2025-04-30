@@ -78,22 +78,15 @@ func queryFalcon(ctx context.Context, args falcon.FalconRequest) (any, error) {
 	case "get_positions":
 		return falconService.GetPositions(ctx)
 
-	case "get_security_info":
-		if err := validateSecurityInfoRequest(args); err != nil {
-			logger.Error("invalid security info request", zap.Error(err))
-			return nil, fmt.Errorf("invalid security info request: %w", err)
-		}
-		return falconService.GetSecurityInfo(ctx, &falcon.SecurityInfoReq{
-			Token:        args.TradingSymbol,
-			ExchangeName: args.ExchangeName,
-		})
-
 	case "get_order_book":
 		return falconService.GetOrderBook(ctx)
 
 	case "get_trade_ideas":
 		return falconService.GetTradeIdeas(ctx)
-
+	case "get_security_info":
+		return falconService.GetSecurityInfo(ctx, &falcon.SecurityInfoReq{
+			Name: args.TradingSymbol,
+		})
 	case "get_price":
 		if args.TradingSymbol == "" {
 			logger.Error("trading symbol is required for price query")
