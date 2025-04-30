@@ -29,72 +29,72 @@ type FalconRequest struct {
 	TrailPrice    string `json:"trailing_price,omitempty" jsonschema:"description=Trailing price for the order"`
 
 	// Query parameters
-	QueryType string `json:"query_type" jsonschema:"description=Type of query (place_order/get_holdings/get_positions/get_security_info/get_order_book)"`
+	QueryType string `json:"query_type" jsonschema:"description=Type of query (place_order/get_holdings/get_positions/get_security_info/get_order_book/get_price/get_trade_ideas)"`
 }
 
 type Order struct {
-	UserID          string `json:"-" db:"user_id"`
-	ExchangeOrderID string `json:"exchange_order_id,omitempty" db:"exchange_order_id"`
-	ParentOrderID   string `json:"parent_order_id,omitempty" db:"parent_order_id"`
-	// IsAMO                 bool   `json:"-" db:"is_amo"`
-	RejectReason          string `json:"reject_reason,omitempty" db:"reject_reason"`
-	MarketProdPercentange string `json:"-" db:"-"`
-	Status                int    `json:"status" db:"status"`
-	OriginalQty           int    `json:"original_quantity,omitempty" db:"original_quantity"`
-	OriginalPrice         string `json:"original_price,omitempty" db:"original_price"`
-	FilledShares          int    `json:"filled_shares,omitempty" db:"filled_shares"`
-	CancelledOrderQty     int    `json:"cancelled_quantity,omitempty" db:"cancelled_quantity"`
-	AvgPrice              string `json:"average_price,omitempty" db:"average_price"`
-	PricePrecision        string `json:"price_precision,omitempty" db:"-"`
-	LotSize               int    `json:"lot_size,omitempty" db:"lot_size"`
-	TickSize              string `json:"tick_size,omitempty" db:"-"`
-	PriceFactor           string `json:"price_factor,omitempty" db:"-"`
-	OrderEntryTime        string `json:"entry_time" db:"entry_time"`
-	OmsTime               string `json:"oms_time" db:"oms_time"`
-	ExchangeTime          string `json:"exchange_time,omitempty" db:"exchange_time"`
-	TrgtStoplossHit       string `json:"target_stoploss_hit,omitempty" db:"target_stoploss_hit"`
-	RTargetPrice          string `json:"req_target_price,omitempty" db:"req_target_price"`
-	OrgTargetPrice        string `json:"original_target_price,omitempty" db:"original_target_price"`
-	RStoplossPrice        string `json:"req_stop_loss_price,omitempty" db:"req_stop_loss_price"`
-	OrgStopLossPrice      string `json:"org_stop_loss_price,omitempty" db:"org_stop_loss_price"`
-	Tags                  string `json:"tags,omitempty" db:"tags"` //comma separated values
-	FillTime              string `json:"fill_time,omitempty" db:"fill_time"`
-	FillID                string `json:"fill_id,omitempty" db:"fill_id"`
-	FillQty               string `json:"fill_quantity,omitempty" db:"fill_quantity"`
-	FillPrice             string `json:"fill_price,omitempty" db:"fill_price"`
-	ReportType            int    `json:"report_type,omitempty" db:"report_type"`
-	BasketOrderID         string `json:"basket_order_id,omitempty" db:"basket_order_id"`
-	ClientID              string `json:"-" db:"client_id"`
-	// RejectedBy            string `json:"rejected_by,omitempty" db:"rejected_by"`
+	UserID          string `json:"-"`
+	ExchangeOrderID string `json:"exchange_order_id,omitempty"`
+	ParentOrderID   string `json:"parent_order_id,omitempty"`
+	// IsAMO                 bool   `json:"-"`
+	RejectReason          string `json:"reject_reason,omitempty"`
+	MarketProdPercentange string `json:"-"`
+	Status                int    `json:"status"`
+	OriginalQty           int    `json:"original_quantity,omitempty"`
+	OriginalPrice         string `json:"original_price,omitempty"`
+	FilledShares          int    `json:"filled_shares,omitempty"`
+	CancelledOrderQty     int    `json:"cancelled_quantity,omitempty"`
+	AvgPrice              string `json:"average_price,omitempty"`
+	PricePrecision        string `json:"price_precision,omitempty"`
+	LotSize               int    `json:"lot_size,omitempty"`
+	TickSize              string `json:"tick_size,omitempty"`
+	PriceFactor           string `json:"price_factor,omitempty"`
+	OrderEntryTime        string `json:"entry_time"`
+	OmsTime               string `json:"oms_time"`
+	ExchangeTime          string `json:"exchange_time,omitempty"`
+	TrgtStoplossHit       string `json:"target_stoploss_hit,omitempty"`
+	RTargetPrice          string `json:"req_target_price,omitempty"`
+	OrgTargetPrice        string `json:"original_target_price,omitempty"`
+	RStoplossPrice        string `json:"req_stop_loss_price,omitempty"`
+	OrgStopLossPrice      string `json:"org_stop_loss_price,omitempty"`
+	Tags                  string `json:"tags,omitempty"` //comma separated values
+	FillTime              string `json:"fill_time,omitempty"`
+	FillID                string `json:"fill_id,omitempty"`
+	FillQty               string `json:"fill_quantity,omitempty"`
+	FillPrice             string `json:"fill_price,omitempty"`
+	ReportType            int    `json:"report_type,omitempty"`
+	BasketOrderID         string `json:"basket_order_id,omitempty"`
+	ClientID              string `json:"-"`
+	// RejectedBy            string `json:"rejected_by,omitempty"`
 	UserOrder
 
-	//	Legs                  []Leg       `json:"legs" db:""` //not required for current release
+	//	Legs                  []Leg       `json:"legs"` //not required for current release
 	//Tradebook specific fields
-	// CstFirm   string `json:"customer_firm" db:""`
+	// CstFirm   string `json:"customer_firm"`
 }
 
 type ProtectioParam struct {
-	TargetPrice   string `json:"target_price,omitempty" db:"target_price"`
-	StopLossPrice string `json:"stop_loss_price,omitempty" db:"stop_loss_price"`
-	TrailPrice    string `json:"trailing_price,omitempty" db:"trailing_price"`
+	TargetPrice   string `json:"target_price,omitempty"`
+	StopLossPrice string `json:"stop_loss_price,omitempty"`
+	TrailPrice    string `json:"trailing_price,omitempty"`
 }
 
 type Leg struct {
-	TradingSymbol   string `json:"trading_symbol" db:"trading_symbol"`
-	Quantity        int    `json:"quantity" db:"quantity"`
-	Price           string `json:"price" db:"price"`
-	TransactionType int    `json:"transaction_type" db:"transaction_type"`
+	TradingSymbol   string `json:"trading_symbol"`
+	Quantity        int    `json:"quantity"`
+	Price           string `json:"price"`
+	TransactionType int    `json:"transaction_type"`
 }
 
 type UserOrder struct {
-	OrderSource int `json:"order_source" db:"order_source"`
+	OrderSource int `json:"order_source"`
 	ModifyOrder
 }
 
 type ModifyOrder struct {
-	OMSID   string `json:"oms_id" db:"oms_id"`
-	OrderID string `json:"order_id" db:"order_id"`
-	Remarks string `json:"-" db:"remarks"`
+	OMSID   string `json:"oms_id"`
+	OrderID string `json:"order_id"`
+	Remarks string `json:"-"`
 	ProtectioParam
 	OrderItem
 }
@@ -109,25 +109,24 @@ type Margin struct {
 }
 
 type OrderItem struct {
-	ExchangeName    int       `json:"exchange_name" db:"exchange_name"`
-	Token           string    `json:"token" db:"token"`
-	TradingSymbol   string    `json:"trading_symbol" db:"trading_symbol"`
-	Quantity        int       `json:"quantity" db:"quantity"`
-	Price           string    `json:"price" db:"price"`
-	TriggerPrice    string    `json:"trigger_price,omitempty" db:"trigger_price"`
-	OrderType       int       `json:"order_type" db:"order_type"`
-	TransactionType int       `json:"transaction_type" db:"transaction_type"`
-	PriceType       int       `json:"price_type" db:"price_type"`
-	Validity        int       `json:"validity" db:"validity"`
-	DiscQuantity    int       `json:"disclosed_quantity" db:"disclosed_quantity"`
-	IsAMO           bool      `json:"is_amo" db:"is_amo"`
-	CreatedAt       time.Time `json:"-"  db:"created_at"`
-	UpdatedAt       time.Time `json:"-" db:"updated_at"`
+	ExchangeName    int       `json:"exchange_name"`
+	Token           string    `json:"token"`
+	TradingSymbol   string    `json:"trading_symbol"`
+	Quantity        int       `json:"quantity"`
+	Price           string    `json:"price"`
+	TriggerPrice    string    `json:"trigger_price,omitempty"`
+	OrderType       int       `json:"order_type"`
+	TransactionType int       `json:"transaction_type"`
+	PriceType       int       `json:"price_type"`
+	Validity        int       `json:"validity"`
+	DiscQuantity    int       `json:"disclosed_quantity"`
+	IsAMO           bool      `json:"is_amo"`
+	CreatedAt       time.Time `json:"-" `
+	UpdatedAt       time.Time `json:"-"`
 }
 
 type SecurityInfoReq struct {
-	Token        string `json:"symbol"`
-	ExchangeName int    `json:"exchange_name"`
+	Name string `json:"name"`
 }
 
 type PriceReq struct {

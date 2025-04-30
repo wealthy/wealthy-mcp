@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -17,8 +18,10 @@ import (
 )
 
 var (
-	falconBaseURL = "https://api.wealthy.in/broking/api"
-	midasBaseURL  = "https://api.wealthy.in/midas/api"
+	falconBaseURL   = "https://api.wealthy.in/broking/api"
+	midasBaseURL    = "https://api.wealthy.in/midas/api"
+	searchURL       = "http://scout.wealthy.in/api/v0/search/?q=%s&pt=stocks"
+	ErrUnauthorized = errors.New("unauthorized")
 )
 
 // FalconRequest represents the common parameters for Falcon API requests
@@ -28,10 +31,10 @@ type FalconService interface {
 	PlaceOrder(ctx context.Context, req FalconRequest) (*Order, error)
 	GetHoldings(ctx context.Context) (any, error)
 	GetPositions(ctx context.Context) (any, error)
-	GetSecurityInfo(ctx context.Context, req *SecurityInfoReq) (any, error)
 	GetOrderBook(ctx context.Context) (any, error)
 	GetPrice(ctx context.Context, req *PriceReq) (any, error)
 	GetTradeIdeas(ctx context.Context) (any, error)
+	GetSecurityInfo(ctx context.Context, req *SecurityInfoReq) (any, error)
 }
 
 type falconService struct {
@@ -129,24 +132,6 @@ func (s *falconService) GetPositions(ctx context.Context) (any, error) {
 	return resp, nil
 }
 
-// GetSecurityInfo retrieves information about a security
-func (s *falconService) GetSecurityInfo(ctx context.Context, req *SecurityInfoReq) (any, error) {
-	url := fmt.Sprintf("%s/v0/security/%s", s.baseURL, req.Token)
-	req.ExchangeName = 1
-	jsonReq, _ := json.Marshal(req)
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(jsonReq))
-	if err != nil {
-		return nil, fmt.Errorf("failed to create request: %w", err)
-	}
-	httpReq.Header.Set("Authorization", internal.AuthToken)
-
-	var resp any
-	if err := callRestAPI(ctx, httpReq, &resp, s.client); err != nil {
-		return nil, fmt.Errorf("failed to get security info: %w", err)
-	}
-	return resp, nil
-}
-
 func (s *falconService) GetOrderBook(ctx context.Context) (any, error) {
 	url := fmt.Sprintf("%s/v0/report/orders/", s.baseURL)
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -193,6 +178,23 @@ func (s *falconService) GetTradeIdeas(ctx context.Context) (any, error) {
 	return resp, nil
 }
 
+func (s *falconService) GetSecurityInfo(ctx context.Context, req *SecurityInfoReq) (any, error) {
+	url := fmt.Sprintf(searchURL, req.Name)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	var resp []any
+	if err := callRestAPI(ctx, httpReq, &resp, s.client); err != nil {
+		return nil, fmt.Errorf("failed to search security: %w", err)
+	}
+	if len(resp) == 0 {
+		return nil, fmt.Errorf("no security found")
+	}
+	return resp[0], nil
+}
+
 func callRestAPI(ctx context.Context, httpReq *http.Request, resp any, client *http.Client) error {
 	httpReq.Header.Set("Authorization", internal.AuthToken)
 
@@ -201,9 +203,13 @@ func callRestAPI(ctx context.Context, httpReq *http.Request, resp any, client *h
 		slog.Error("failed to get trade ideas", "error", err)
 		return fmt.Errorf("network error: %w", err)
 	}
+	if httpResp.StatusCode == http.StatusUnauthorized {
+		internal.BrowserLogin(internal.CallbackURL)
+	}
 	if httpResp.StatusCode < 200 || httpResp.StatusCode >= 300 {
 		return fmt.Errorf("response status code: %d", httpResp.StatusCode)
 	}
+
 	defer httpResp.Body.Close()
 	if err := json.NewDecoder(httpResp.Body).Decode(&resp); err != nil {
 		return fmt.Errorf("failed to decode response: %w", err)
