@@ -32,15 +32,19 @@ var (
 	httpClient = &http.Client{
 		Timeout: 30 * time.Second,
 	}
-	AuthStage int
+	AuthStage   int
+	CallbackURL string
 )
 
 func AuthRequired() bool {
 	return AuthStage == AUTH_NOT_STARTED || AuthStage == AUTH_FAILED
 }
 
-func BrowserLogin(callbackURL string) {
-	loginURL := fmt.Sprintf(loginURL+"?redirect_url=%s", url.QueryEscape(callbackURL))
+func BrowserLogin(cbURL string) {
+	if CallbackURL == "" {
+		CallbackURL = cbURL
+	}
+	loginURL := fmt.Sprintf(loginURL+"?redirect_url=%s", url.QueryEscape(CallbackURL))
 	fmt.Println("opening browser", loginURL)
 	AuthStage = AUTH_STARTED
 	err := browser.OpenURL(loginURL)
