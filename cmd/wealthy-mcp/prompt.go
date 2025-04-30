@@ -63,7 +63,14 @@ func promptHandler(ctx context.Context, req mcp.GetPromptRequest) (*mcp.GetPromp
 				Role: mcp.RoleUser,
 				Content: mcp.TextContent{
 					Type: "text",
-					Text: "show me my trade ideas",
+					Text: "show me today's trade ideas",
+				},
+			},
+			{
+				Role: mcp.RoleUser,
+				Content: mcp.TextContent{
+					Type: "text",
+					Text: "get price of RELIANCE",
 				},
 			},
 		},
