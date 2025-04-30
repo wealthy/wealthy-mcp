@@ -40,7 +40,7 @@ To configure MCP (Multi-Cursor Protocol) servers, create a `.cursor/mcp.json` fi
 {
     "mcpServers": {
       "wealthy-mcp": {
-        "command": "mcp_server"
+        "command": "<path to downloaded/installed binary>"
       }
     }
 }
@@ -50,7 +50,7 @@ To pass custom port to server use below example
 {
     "mcpServers": {
       "wealthy-mcp": {
-        "command": "mcp_server",
+        "command": "<path to downloaded/installed binary>",
         "args" : ["addr=localhost:8006"]
       }
     }
@@ -199,5 +199,5 @@ By using this software, you acknowledge that:
 
 ## Support
 
-For support, please open an issue in the GitHub repository or contact the maintainers. 
+For support, please open an issue in the GitHub repository, contact the maintainers, or email Parth at parath.singh@wealthy.in.
 
