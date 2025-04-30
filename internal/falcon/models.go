@@ -29,7 +29,7 @@ type FalconRequest struct {
 	TrailPrice    string `json:"trailing_price,omitempty" jsonschema:"description=Trailing price for the order"`
 
 	// Query parameters
-	QueryType string `json:"query_type" jsonschema:"description=Type of query (place_order/get_holdings/get_positions/get_security_info/get_order_book/get_price/get_trade_ideas)"`
+	QueryType string `json:"query_type" jsonschema:"description=Type of query (place_order/get_holdings/get_positions/get_security_info/get_order_book/get_price(prices are in paisa)/get_trade_ideas)"`
 }
 
 type Order struct {

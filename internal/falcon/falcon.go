@@ -149,7 +149,7 @@ func (s *falconService) GetOrderBook(ctx context.Context) (any, error) {
 
 func (s *falconService) GetPrice(ctx context.Context, req *PriceReq) (any, error) {
 	req.Mode = 3
-	url := fmt.Sprintf("%s/v1/stocks/quotes", s.baseURL)
+	url := fmt.Sprintf("%s/v1/stock/quotes/", s.baseURL)
 	jsonReq, _ := json.Marshal(req)
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(jsonReq))
 	if err != nil {
@@ -185,14 +185,11 @@ func (s *falconService) GetSecurityInfo(ctx context.Context, req *SecurityInfoRe
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	var resp []any
+	var resp any
 	if err := callRestAPI(ctx, httpReq, &resp, s.client); err != nil {
 		return nil, fmt.Errorf("failed to search security: %w", err)
 	}
-	if len(resp) == 0 {
-		return nil, fmt.Errorf("no security found")
-	}
-	return resp[0], nil
+	return resp, nil
 }
 
 func callRestAPI(ctx context.Context, httpReq *http.Request, resp any, client *http.Client) error {
