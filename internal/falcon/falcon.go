@@ -165,7 +165,7 @@ func (s *falconService) GetPrice(ctx context.Context, req *PriceReq) (any, error
 }
 
 func (s *falconService) GetTradeIdeas(ctx context.Context) (any, error) {
-	url := fmt.Sprintf("%s/v0/ideas/?status=2", s.midasBaseURl)
+	url := fmt.Sprintf("%s/v0/idea/?status=2", s.midasBaseURl)
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
