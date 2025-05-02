@@ -108,7 +108,6 @@ You can interact with these queries through natural language in Claude/Cursor. F
   - Enhanced reporting and analytics dashboard
 
 - Platform Enhancements
-  - Multi-exchange support
   - Advanced order types
   - Automated trading strategies
   - Machine learning based alerts
