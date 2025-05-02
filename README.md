@@ -62,6 +62,24 @@ To pass custom port to server use below example
 - Wealthy login page will be opened, enter wealthy credentials and after successful login, return to Claude/Cursor
 - We have setup wealthy mcp server now you are ready to do some smart trading 🎉
 
+## Usage
+Here are the available query types and their purposes:
+
+| Quqery Type | Purpose |
+|------------|---------|
+| get_price | Retrieves the current market price for a specified trading symbol |
+| get_holdings | Shows your current portfolio holdings and their details |
+| get_positions | Displays your open trading positions |
+| get_order_book | Lists all your orders (open, executed, and cancelled) |
+| get_trade_ideas | Provides AI-generated trading suggestions and market insights |
+| get_security_info | Fetches detailed information about a specific security/stock |
+| place_order | Places a new buy/sell order with specified parameters |
+
+You can interact with these queries through natural language in Claude/Cursor. For example:
+- "What is the price of RELIANCE?"
+- "Show me my current holdings"
+- "I want to buy 100 shares of TATAMOTORS at market price"
+
 
 ## License
 
