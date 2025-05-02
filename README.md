@@ -80,6 +80,40 @@ You can interact with these queries through natural language in Claude/Cursor. F
 - "Show me my current holdings"
 - "I want to buy 100 shares of TATAMOTORS at market price"
 
+## Roadmap
+
+- Real-time Market Data Integration
+  - Implement WebSocket connections for live price streaming
+  - Add support for multiple symbols subscription
+  - Enhance price data formatting and display
+  - Implement reconnection and error handling
+
+- Price Alerts System
+  - Enable setting price alerts through natural language
+  - Support multiple alert conditions (above/below/crossing)
+  - Implement alert notifications within chat
+  - Add alert management (list/modify/delete alerts)
+
+- Real-time Order Updates
+  - WebSocket integration for order status streaming
+  - Live updates on order execution
+  - Real-time P&L tracking
+  - Push notifications for order events
+
+- Advanced Features
+  - Portfolio analytics with real-time updates
+  - Custom watchlists with live streaming
+  - Advanced alert conditions (technical indicators)
+  - Mobile notifications integration
+  - Enhanced reporting and analytics dashboard
+
+- Platform Enhancements
+  - Multi-exchange support
+  - Advanced order types
+  - Automated trading strategies
+  - Machine learning based alerts
+  - Social trading features
+
 
 ## License
 
