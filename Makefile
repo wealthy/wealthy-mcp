@@ -6,10 +6,6 @@ help: ## Show this help message
 	@echo "Targets:"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
 
-run: ## This is used to run the application
-	go run cmd/*.go -t=sse
+run: ## This is used to run the application in sse 
+	go run cmd/wealthy-mcp/*.go -t=sse
 
-run:
-	go run cmd/*.go -t=sse
-run:
-	go run cmd/*.go -t=sse
