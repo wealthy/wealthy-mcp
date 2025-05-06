@@ -8,13 +8,13 @@ package tools
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/mark3labs/mcp-go/server"
 	mcp "github.com/wealthy/wealthy-mcp"
 	"github.com/wealthy/wealthy-mcp/internal/falcon"
-	"go.uber.org/zap"
 )
 
 // Default timeout for HTTP client in seconds
@@ -48,22 +48,18 @@ func validateSecurityInfoRequest(args falcon.FalconRequest) error {
 }
 
 func queryFalcon(ctx context.Context, args falcon.FalconRequest) (any, error) {
-	logger, _ := zap.NewProduction(
-		zap.WithCaller(true),
-		zap.Fields(
-			zap.String("query_type", args.QueryType),
-		),
+	logger := slog.With(
+		"query_type", args.QueryType,
 	)
-	ctx = context.WithValue(ctx, "logger", logger)
 
 	// Add request tracing
-	logger.Info("InfoFalconRequest", zap.Any("args", args))
+	logger.Info("InfoFalconRequest", "args", args)
 	defer logger.Info("InfoFalconRequestCompleted")
 
 	switch args.QueryType {
 	case "place_order":
 		if err := validatePlaceOrderRequest(args); err != nil {
-			logger.Error("invalid place order request", zap.Error(err))
+			logger.Error("invalid place order request", "error", err)
 			return nil, fmt.Errorf("invalid place order request: %w", err)
 		}
 		return falconService.PlaceOrder(ctx, args)
@@ -81,7 +77,7 @@ func queryFalcon(ctx context.Context, args falcon.FalconRequest) (any, error) {
 		return falconService.GetTradeIdeas(ctx)
 	case "get_security_info":
 		if err := validateSecurityInfoRequest(args); err != nil {
-			logger.Error("invalid security info request", zap.Error(err))
+			logger.Error("invalid security info request", "error", err)
 			return nil, fmt.Errorf("invalid security info request: %w", err)
 		}
 		return falconService.GetSecurityInfo(ctx, &args.SecurityInfoReq)
@@ -96,7 +92,7 @@ func queryFalcon(ctx context.Context, args falcon.FalconRequest) (any, error) {
 
 	default:
 		err := fmt.Errorf("unsupported query type: %s", args.QueryType)
-		logger.Error("invalid query type", zap.Error(err))
+		logger.Error("invalid query type", "error", err)
 		return nil, err
 	}
 }

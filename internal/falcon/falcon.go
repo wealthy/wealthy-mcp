@@ -22,6 +22,7 @@ var (
 	midasBaseURL    = "https://api.wealthy.in/midas/api"
 	searchURL       = "http://scout.wealthy.in/api/v0/search/?q=%s&pt=stocks"
 	ErrUnauthorized = errors.New("unauthorized")
+	wsURL           = "https://api.wealthy.in/broking/api/v0/auth/oms/token/"
 )
 
 // FalconRequest represents the common parameters for Falcon API requests
@@ -35,6 +36,8 @@ type FalconService interface {
 	GetPrice(ctx context.Context, req *PriceReq) (any, error)
 	GetTradeIdeas(ctx context.Context) (any, error)
 	GetSecurityInfo(ctx context.Context, req *SecurityInfoReq) (any, error)
+	AddToWatchlist(ctx context.Context, req *WatchlistReq) (any, error)
+	GetWatchlists(ctx context.Context, req *WatchlistReq) (any, error)
 }
 
 type falconService struct {
@@ -212,4 +215,68 @@ func callRestAPI(ctx context.Context, httpReq *http.Request, resp any, client *h
 		return fmt.Errorf("failed to decode response: %w", err)
 	}
 	return nil
+}
+
+func (s *falconService) GetWebsocketURL(ctx context.Context) (string, error) {
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, wsURL, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to create request: %w", err)
+	}
+	httpReq.Header.Set("Authorization", internal.AuthToken)
+
+	var resp WebsocketURLResponse
+	if err := callRestAPI(ctx, httpReq, &resp, s.client); err != nil {
+		return "", fmt.Errorf("failed to get websocket URL: %w", err)
+	}
+	return resp.BaseURL, nil
+}
+
+func (s *falconService) AddToWatchlist(ctx context.Context, req *WatchlistReq) (any, error) {
+	url := fmt.Sprintf("%s/v0/watchlist/", s.baseURL)
+	jsonReq, _ := json.Marshal(req)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPut, url, bytes.NewBuffer(jsonReq))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+	httpReq.Header.Set("Authorization", internal.AuthToken)
+
+	var resp any
+	if err := callRestAPI(ctx, httpReq, &resp, s.client); err != nil {
+		return nil, fmt.Errorf("failed to add to watchlist: %w", err)
+	}
+	return resp, nil
+}
+
+func (s *falconService) GetWatchlists(ctx context.Context, req *WatchlistReq) (any, error) {
+	if req.Name == "All" {
+		return s.getAllWatchlists(ctx)
+	}
+	url := fmt.Sprintf("%s/v0/watchlist/", s.baseURL)
+	jsonReq, _ := json.Marshal(req)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(jsonReq))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+	httpReq.Header.Set("Authorization", internal.AuthToken)
+
+	var resp any
+	if err := callRestAPI(ctx, httpReq, &resp, s.client); err != nil {
+		return nil, fmt.Errorf("failed to get watchlist: %w", err)
+	}
+	return resp, nil
+}
+
+func (s *falconService) getAllWatchlists(ctx context.Context) (any, error) {
+	url := fmt.Sprintf("%s/v0/watchlist/", s.baseURL)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+	httpReq.Header.Set("Authorization", internal.AuthToken)
+
+	var resp any
+	if err := callRestAPI(ctx, httpReq, &resp, s.client); err != nil {
+		return nil, fmt.Errorf("failed to get all watchlists: %w", err)
+	}
+	return resp, nil
 }

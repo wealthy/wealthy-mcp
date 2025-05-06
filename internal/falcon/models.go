@@ -134,3 +134,18 @@ type PriceReq struct {
 	Mode    int      `json:"mode"`
 	Symbols []string `json:"symbols"`
 }
+
+type WebsocketURLResponse struct {
+	BaseURL string `json:"base_url"`
+	Body    any    `json:"body"`
+}
+
+type WatchlistReq struct {
+	Name   string  `json:"name" jsonschema:"required,description=Name of the watchlist, pass 'All' to get all watchlists"`
+	Scrips []scrip `json:"instrument,omitempty" jsonschema:"required,description=Scrips to add to the watchlist"`
+}
+
+type scrip struct {
+	Exchange int    `json:"exchange" jsonschema:"description=Exchange name identifier, NSE=1, NFO=2, BSE=3, BFO=4, check security info result"`
+	Token    string `json:"token" jsonschema:"description=token of the scrip, check security info result"`
+}
