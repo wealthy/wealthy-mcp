@@ -26,7 +26,12 @@ func newServer() *server.MCPServer {
 		"0.1.0",
 	)
 	//add tools
-	tools.AddFalconTool(s)
+	tools.AddSearchTool(s)
+	tools.AddResearchTool(s)
+	tools.AddReportsTool(s)
+	tools.AddOrderTool(s)
+	tools.AddWatchlistTool(s)
+	tools.AddGetWatchlistTool(s)
 	prompt := mcp.NewPrompt("falcon-prompt",
 		mcp.WithPromptDescription("wealthy mcp server prompts"))
 	s.AddPrompt(prompt, server.PromptHandlerFunc(promptHandler))
@@ -66,17 +71,18 @@ func run(transport, addr string, logLevel slog.Level) error {
 	case "sse":
 		router := newGinServer()
 		srv := server.NewSSEServer(s,
-			// server.WithSSEContextFunc(mcp.ExtractReqInformation),
 			server.WithBasePath("/mcp"),
 		)
 
+		// Handle both the base path and wildcard paths
+		router.Any("/mcp", gin.WrapF(srv.ServeHTTP))
 		router.Any("/mcp/*path", gin.WrapF(srv.ServeHTTP))
-		router.GET("/auth/callback/", internal.AuthHandler)
-		router.GET("/health/", healthHandler)
 		// Force user to login through browser
 		var loginOnce sync.Once
 		loginOnce.Do(func() {
-			internal.BrowserLogin(addr + "/auth/callback")
+			if internal.AuthStage == internal.AUTH_NOT_STARTED || internal.AuthStage == internal.AUTH_FAILED {
+				internal.BrowserLogin("http://" + addr + "/auth/callback")
+			}
 		})
 		slog.Info("Starting Wealthy MCP server using SSE transport", "address", addr)
 		if err := router.Run(addr); err != nil {
