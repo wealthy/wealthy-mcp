@@ -25,6 +25,7 @@ func newServer() *server.MCPServer {
 		"wealthy-mcp",
 		"0.1.0",
 	)
+
 	//add tools
 	tools.AddSearchTool(s)
 	tools.AddResearchTool(s)
@@ -32,6 +33,9 @@ func newServer() *server.MCPServer {
 	tools.AddOrderTool(s)
 	tools.AddWatchlistTool(s)
 	tools.AddGetWatchlistTool(s)
+	tools.AddPriceTool(s)
+
+	//register prompt
 	prompt := mcp.NewPrompt("falcon-prompt",
 		mcp.WithPromptDescription("wealthy mcp server prompts"))
 	s.AddPrompt(prompt, server.PromptHandlerFunc(promptHandler))
