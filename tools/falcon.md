@@ -19,7 +19,6 @@ The Falcon tool provides a seamless interface to interact with the Falcon tradin
 Places a new trading order on the Falcon platform.
 
 **Parameters:**
-- `account_id`: Trading account identifier
 - `trading_symbol`: Symbol to trade
 - `transaction_type`: Buy (1) or Sell (2)
 - `quantity`: Number of units to trade

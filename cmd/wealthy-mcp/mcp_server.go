@@ -14,7 +14,6 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/wealthy/wealthy-mcp/internal"
 	"github.com/wealthy/wealthy-mcp/tools"
@@ -23,7 +22,7 @@ import (
 func newServer() *server.MCPServer {
 	s := server.NewMCPServer(
 		"wealthy-mcp",
-		"0.1.0",
+		"0.1.1",
 	)
 
 	//add tools
@@ -34,11 +33,12 @@ func newServer() *server.MCPServer {
 	tools.AddWatchlistTool(s)
 	tools.AddGetWatchlistTool(s)
 	tools.AddPriceTool(s)
+	tools.UpdateWatchlist(s)
 
 	//register prompt
-	prompt := mcp.NewPrompt("falcon-prompt",
-		mcp.WithPromptDescription("wealthy mcp server prompts"))
-	s.AddPrompt(prompt, server.PromptHandlerFunc(promptHandler))
+	s.AddPrompt(placeOrderPrompt(), server.PromptHandlerFunc(placeOrderPromptHandler))
+	s.AddPrompt(getTradeIdeasPrompt(), server.PromptHandlerFunc(getTradeIdeasPromptHandler))
+	s.AddPrompt(createWatchlistPrompt(), server.PromptHandlerFunc(createWatchlistPromptHandler))
 	return s
 }
 
@@ -108,7 +108,9 @@ func healthHandler(c *gin.Context) {
 }
 
 func main() {
+	gin.SetMode(gin.ReleaseMode)
 	var transport string
+	var debug bool
 	flag.StringVar(&transport, "t", "stdio", "Transport type (stdio or sse)")
 	flag.StringVar(
 		&transport,
@@ -118,7 +120,10 @@ func main() {
 	)
 	addr := flag.String("addr", "localhost:8004", "The host and port to start the sse server on")
 	logLevel := flag.String("log-level", "info", "Log level (debug, info, warn, error)")
+	flag.BoolVar(&debug, "debug", false, "Enable debug mode to save auth token to file")
 	flag.Parse()
+
+	internal.DebugMode = debug
 
 	if err := run(transport, *addr, parseLevel(*logLevel)); err != nil {
 		panic(err)

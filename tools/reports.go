@@ -34,7 +34,7 @@ func getReports(ctx context.Context, args ReportRequest) (any, error) {
 
 var ReportsTool = mcp.MustTool(
 	"reports_tool",
-	"Tool for generating reports",
+	"Tool for generating reports like holdings, positions, order book",
 	getReports,
 )
 

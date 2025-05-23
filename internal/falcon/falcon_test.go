@@ -104,19 +104,17 @@ func TestPlaceOrder(t *testing.T) {
 			})
 			defer server.Close()
 
-			got, err := service.PlaceOrder(context.Background(), tt.req)
+			got, err := service.PlaceOrder(context.Background(), []OrderReq{tt.req.OrderReq})
 			if tt.wantErr {
 				assert.Error(t, err)
 				return
 			}
 			require.NoError(t, err)
-			assert.Equal(t, tt.want.UserOrder.OrderSource, got.UserOrder.OrderSource)
-			assert.Equal(t, tt.want.UserOrder.ModifyOrder.OrderItem.ExchangeName, got.UserOrder.ModifyOrder.OrderItem.ExchangeName)
-			assert.Equal(t, tt.want.UserOrder.ModifyOrder.OrderItem.Token, got.UserOrder.ModifyOrder.OrderItem.Token)
-			assert.Equal(t, tt.want.UserOrder.ModifyOrder.OrderItem.TradingSymbol, got.UserOrder.ModifyOrder.OrderItem.TradingSymbol)
-			assert.Equal(t, tt.want.UserOrder.ModifyOrder.OrderItem.Quantity, got.UserOrder.ModifyOrder.OrderItem.Quantity)
-			assert.Equal(t, tt.want.UserOrder.ModifyOrder.OrderItem.Price, got.UserOrder.ModifyOrder.OrderItem.Price)
-			assert.Equal(t, tt.want.UserOrder.ModifyOrder.OrderItem.TransactionType, got.UserOrder.ModifyOrder.OrderItem.TransactionType)
+			require.Len(t, got, 1)
+			assert.Equal(t, tt.want.TradingSymbol, got[0].TradingSymbol)
+			assert.Equal(t, tt.want.Quantity, got[0].Quantity)
+			assert.Equal(t, tt.want.IsAMO, got[0].IsAMO)
+			assert.Equal(t, tt.want.Status, got[0].Status)
 		})
 	}
 }
@@ -545,7 +543,7 @@ func TestGetWatchlists(t *testing.T) {
 			})
 			defer server.Close()
 
-			got, err := service.GetWatchlists(context.Background(), tt.req)
+			got, err := service.GetWatchlists(context.Background())
 			if tt.wantErr {
 				assert.Error(t, err)
 				return

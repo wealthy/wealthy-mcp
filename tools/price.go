@@ -14,10 +14,7 @@ type GetPriceArgs struct {
 }
 
 func getPrice(ctx context.Context, args GetPriceArgs) (any, error) {
-	return utils.FalconService.GetPrice(ctx, &falcon.PriceReq{
-		Mode:    3,
-		Symbols: args.Symbols,
-	})
+	return utils.FalconService.GetPrice(ctx, falcon.MakePriceReq(args.Symbols))
 }
 
 var priceTool = mcp.MustTool(

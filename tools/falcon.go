@@ -62,7 +62,7 @@ func queryFalcon(ctx context.Context, args falcon.FalconRequest) (any, error) {
 			logger.Error("invalid place order request", "error", err)
 			return nil, fmt.Errorf("invalid place order request: %w", err)
 		}
-		return falconService.PlaceOrder(ctx, args)
+		return falconService.PlaceOrder(ctx, []falcon.OrderReq{args.OrderReq})
 
 	case "get_holdings":
 		return falconService.GetHoldings(ctx)

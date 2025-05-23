@@ -13,6 +13,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -34,6 +35,8 @@ var (
 	}
 	AuthStage   int
 	CallbackURL string
+
+	DebugMode bool // Set from main if debug flag is enabled
 )
 
 func AuthRequired() bool {
@@ -41,6 +44,20 @@ func AuthRequired() bool {
 }
 
 func BrowserLogin(cbURL string) {
+	// if DebugMode {
+	// 	if f, err := os.Open("auth_token.txt"); err == nil {
+	// 		defer f.Close()
+	// 		buf := make([]byte, 4096)
+	// 		n, _ := f.Read(buf)
+	// 		token := string(buf[:n])
+	// 		if len(token) > 0 {
+	// 			AuthToken = token
+	// 			AuthStage = AUTH_SUCCESS
+	// 			fmt.Println("Loaded auth token from file in debug mode, skipping browser login.")
+	// 			return
+	// 		}
+	// 	}
+	// }
 	if CallbackURL == "" {
 		CallbackURL = cbURL
 	}
@@ -63,6 +80,17 @@ func AuthHandler(c *gin.Context) {
 		}
 		AuthToken = token
 		AuthStage = AUTH_SUCCESS
+
+		// If debug mode, save token to file
+		if DebugMode {
+			f, err := os.Create("auth_token.txt")
+			if err == nil {
+				f.WriteString(AuthToken)
+				f.Close()
+			} else {
+				log.Println("Failed to write auth token to file:", err)
+			}
+		}
 		// Return success with HTML that will close the window
 		c.Header("Content-Type", "text/html")
 		c.Status(200)
