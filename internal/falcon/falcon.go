@@ -33,6 +33,8 @@ var (
 type FalconService interface {
 	//order
 	PlaceOrder(ctx context.Context, req []OrderReq) ([]placeOrderResponse, error)
+	ModifyOrder(ctx context.Context, req ModifyOrderReq) (*placeOrderResponse, error)
+	CancelOrder(ctx context.Context, req CancelOrderReq) (any, error)
 	//reports
 	GetHoldings(ctx context.Context) (any, error)
 	GetPositions(ctx context.Context) (any, error)
@@ -45,6 +47,8 @@ type FalconService interface {
 	AddToWatchlist(ctx context.Context, req *WatchlistReq) (any, error)
 	GetWatchlists(ctx context.Context) (any, error)
 	CreateWatchlist(ctx context.Context, name string) (any, error)
+	//margin
+	GetUserMargin(ctx context.Context) (any, error)
 }
 
 type falconService struct {
@@ -291,6 +295,53 @@ func (s *falconService) CreateWatchlist(ctx context.Context, name string) (any, 
 	var resp any
 	if err := callRestAPI(ctx, httpReq, &resp, s.client); err != nil {
 		return nil, fmt.Errorf("failed to create watchlist: %w", err)
+	}
+	return resp, nil
+}
+
+func (s *falconService) ModifyOrder(ctx context.Context, req ModifyOrderReq) (*placeOrderResponse, error) {
+	url := fmt.Sprintf("%s/v0/order/%s/", s.baseURL, req.OrderID)
+	jsonReq, _ := json.Marshal(req)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPut, url, bytes.NewBuffer(jsonReq))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+	httpReq.Header.Set("Authorization", internal.AuthToken)
+
+	var resp placeOrderResponse
+	if err := callRestAPI(ctx, httpReq, &resp, s.client); err != nil {
+		return nil, fmt.Errorf("failed to modify order: %w", err)
+	}
+	return &resp, nil
+}
+
+func (s *falconService) CancelOrder(ctx context.Context, req CancelOrderReq) (any, error) {
+	url := fmt.Sprintf("%s/v0/order/%s/", s.baseURL, req.OrderID)
+	jsonReq, _ := json.Marshal(req)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodDelete, url, bytes.NewBuffer(jsonReq))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+	httpReq.Header.Set("Authorization", internal.AuthToken)
+
+	var resp any
+	if err := callRestAPI(ctx, httpReq, &resp, s.client); err != nil {
+		return nil, fmt.Errorf("failed to cancel order: %w", err)
+	}
+	return resp, nil
+}
+
+func (s *falconService) GetUserMargin(ctx context.Context) (any, error) {
+	url := fmt.Sprintf("%s/v0/report/fund-limits/", s.baseURL)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+	httpReq.Header.Set("Authorization", internal.AuthToken)
+
+	var resp any
+	if err := callRestAPI(ctx, httpReq, &resp, s.client); err != nil {
+		return nil, fmt.Errorf("failed to get user margin: %w", err)
 	}
 	return resp, nil
 }

@@ -21,6 +21,8 @@ var WatchlistTool = mcp.MustTool(
 
 func AddWatchlistTool(mcp *server.MCPServer) {
 	WatchlistTool.Register(mcp)
+	GetWatchlistTool.Register(mcp)
+	UpdateWatchlistTool.Register(mcp)
 }
 
 var GetWatchlistTool = mcp.MustTool(

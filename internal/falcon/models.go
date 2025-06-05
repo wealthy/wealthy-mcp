@@ -5,7 +5,10 @@
 
 package falcon
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type FalconRequest struct {
 	QueryType string `json:"query_type" jsonschema:"description=Type of query (place_order/get_holdings/get_positions/get_security_info/get_order_book/get_price(prices are in paisa)/get_trade_ideas)"`
@@ -186,6 +189,9 @@ func MakePriceReq(symbols []string) *PriceReq {
 		Mode: 3,
 	}
 	for _, symbol := range symbols {
+		if !strings.HasSuffix(symbol, "-EQ") {
+			symbol = symbol + "-EQ"
+		}
 		priceReq.Symbols = append(priceReq.Symbols, "nse:"+symbol)
 	}
 	return priceReq
@@ -197,4 +203,14 @@ type placeOrderResponse struct {
 	Quantity      int    `json:"quantity"`
 	IsAMO         bool   `json:"is_amo"`
 	Status        string `json:"status"`
+}
+
+type ModifyOrderReq struct {
+	OrderID string `json:"order_id"`
+	OrderReq
+}
+
+type CancelOrderReq struct {
+	OrderType int    `json:"order_type"`
+	OrderID   string `json:"order_id"`
 }

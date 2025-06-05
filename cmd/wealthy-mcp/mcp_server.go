@@ -31,14 +31,14 @@ func newServer() *server.MCPServer {
 	tools.AddReportsTool(s)
 	tools.AddOrderTool(s)
 	tools.AddWatchlistTool(s)
-	tools.AddGetWatchlistTool(s)
 	tools.AddPriceTool(s)
-	tools.UpdateWatchlist(s)
+	tools.AddUserTool(s)
 
 	//register prompt
 	s.AddPrompt(placeOrderPrompt(), server.PromptHandlerFunc(placeOrderPromptHandler))
 	s.AddPrompt(getTradeIdeasPrompt(), server.PromptHandlerFunc(getTradeIdeasPromptHandler))
 	s.AddPrompt(createWatchlistPrompt(), server.PromptHandlerFunc(createWatchlistPromptHandler))
+	s.AddPrompt(portfolioAnalysisPrompt(), server.PromptHandlerFunc(portfolioAnalysisPromptHandler))
 	return s
 }
 
