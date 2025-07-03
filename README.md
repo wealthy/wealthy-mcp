@@ -75,20 +75,30 @@ To use a custom port, add the `args` parameter:
 
 Here are the available query types and their purposes:
 
-| Query Type      | Purpose |
-|----------------|---------|
-| `get_price`      | Retrieves the current market price for a specified trading symbol |
-| `get_holdings`   | Shows your current portfolio holdings and their details |
-| `get_positions`  | Displays your open trading positions |
+| Query Type | Purpose |
+|------------|---------|
+| `get_user_margin` | Retrieves user margin information |
+| `get_price` | Retrieves the current market price for a specified trading symbol |
+| `get_holdings` | Shows your current portfolio holdings and their details |
+| `get_positions` | Displays your open trading positions |
 | `get_order_book` | Lists all your orders (open, executed, and cancelled) |
-| `get_trade_ideas`| Provides trading suggestions and market insights |
+| `get_trade_ideas` | Provides trading suggestions and market insights |
 | `get_security_info` | Fetches detailed information about a specific security/stock |
-| `place_order`    | Places a new buy/sell order with specified parameters |
+| `place_order` | Places a new buy/sell order with specified parameters |
+| `create_watchlist` | Creates a new watchlist of securities |
+| `get_watchlist` | Retrieves existing watchlists |
+| `update_watchlist` | Updates an existing watchlist with new securities |
+| `search` | Searches and finds security symbols |
+| `research` | Accesses trading ideas and research information |
+| `reports_tool` | Generates various types of reports (holdings/positions/order_book) |
 
 You can interact with these queries through natural language in Claude/Cursor. For example:
 - "What is the price of RELIANCE?"
 - "Show me my current holdings"
 - "I want to buy 100 shares of TATAMOTORS at market price"
+- "Create a watchlist for tech stocks"
+- "Search for stocks related to renewable energy"
+- "Get research recommendations for banking sector"
 
 ## Roadmap
 

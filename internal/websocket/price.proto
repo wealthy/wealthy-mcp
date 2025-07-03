@@ -1,0 +1,91 @@
+syntax = "proto3";
+package types;
+
+option go_package = "github.com/wealthy/broking-stream/types";
+
+message LTPC {
+  uint32 ltp = 1;  // last trade price
+  uint32 close = 2;
+}
+message Full {
+  uint32 volume = 1;
+  uint32 open = 2;
+  uint32 high = 3;
+  uint32 close = 4;
+  uint32 low = 5;
+  uint32 average_trade_price = 6;
+  uint32 exchange_timestamp = 7;
+  uint64 open_interest = 8;
+  uint64 oi_change = 9;
+  uint64 total_oi = 10;
+  uint32 upper_circuit = 11;
+  uint32 lower_circuit = 12;
+  uint32 last_trade_time = 13;      // last trade time
+  uint32 last_trade_quantity = 14;  // last trade quantity
+}
+
+message MarketDepth {
+  message Buy {
+    uint32 bid_quantity = 1;      // bid quantity
+    uint32 bid_price = 2;         // bid price
+    uint32 no_of_bid_orders = 3;  // bid number of orders
+  }
+  message Sell {
+    uint32 ask_quantity = 1;      // ask quantity
+    uint32 ask_price = 2;         // ask price
+    uint32 no_of_ask_orders = 3;  // ask number of orders
+  }
+  repeated Buy buys = 1;
+  repeated Sell sells = 2;
+}
+
+message Extended {
+  MarketDepth market_depth = 1;
+  uint32 total_buy_quantity = 2;   // total_buy_quantity
+  uint32 total_sell_quantity = 3;  // total_sell_quantity
+}
+
+message Error {
+  string code = 1;
+  string message = 2;
+}
+
+message Feed {
+  uint32 exchange = 1;
+  uint32 token = 2;
+  LTPC ltpc = 3;
+  Full full = 4;
+  Extended extended = 5;
+  bool live = 6;
+}
+
+message OrderUpdate {
+  string order_id = 1;
+  string crn = 2;
+  int64 status = 3;
+  int64 quantity = 4;
+  int64 report_type = 5;
+  string oms_id = 6;
+  int64 exchange_name = 7;
+  string trading_symbol = 8;
+  int64 transaction_type = 9;
+  string fill_id = 10;
+  string fill_quantity = 11;
+  string fill_time = 12;
+  string fill_price = 13;
+  int64 filled_shares = 14;
+  string reject_reason = 15;
+  string rejected_by = 16;
+  int64 price_type = 17;
+  string average_price = 18;
+  int64 cancelled_quantity = 19;
+  string exchange_order_id = 20;
+}
+
+message Message {
+  oneof data {
+    Feed feed = 1;
+    OrderUpdate order_update = 2;
+    Error error = 3;
+  }
+}

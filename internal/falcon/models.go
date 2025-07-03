@@ -5,7 +5,10 @@
 
 package falcon
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type FalconRequest struct {
 	QueryType string `json:"query_type" jsonschema:"description=Type of query (place_order/get_holdings/get_positions/get_security_info/get_order_book/get_price(prices are in paisa)/get_trade_ideas)"`
@@ -13,24 +16,55 @@ type FalconRequest struct {
 	SecurityInfoReq
 }
 
+type BasketOrderReq struct {
+	Orders []OrderReq `json:"orders" jsonschema:"description=List of orders to be placed"`
+}
+
+// OrderReq defines the schema for placing an order via MCP Falcon.
+//
+// Field rules:
+// - order_type: 1=Market, 2=Limit, 3=Stop, 4=Stop Limit
+// - price_type: 1=LMT (Limit), 2=MKT (Market), 3=SLLMT (Stop Loss Limit), 4=SLMKT (Stop Loss Market), 5=DS (Disclosed), 6=TWOLEG (Two Leg), 7=THREEELEG (Three Leg)
+// - price: REQUIRED for Limit (order_type=2) and Stop Limit (order_type=4) orders; OMIT or set to empty for Market orders
+// - trigger_price: REQUIRED for Stop and Stop Limit orders
+// - transaction_type: 1=Buy, 2=Sell
+//
+// See field-level comments for more details.
 type OrderReq struct {
-	ExchangeName    int    `json:"exchange_name" jsonschema:"description=Exchange name identifier, NSE=1, NFO=2, BSE=3, BFO=4"`
-	Token           string `json:"token" jsonschema:"description=Trading token"`
-	TradingSymbol   string `json:"trading_symbol" jsonschema:"description=Symbol to trade"`
-	Quantity        int    `json:"quantity" jsonschema:"description=Quantity to trade"`
-	Price           string `json:"price" jsonschema:"description=Price for the order"`
-	TriggerPrice    string `json:"trigger_price,omitempty" jsonschema:"description=Trigger price for stop orders"`
-	OrderType       int    `json:"order_type" jsonschema:"description=Type of order, 1=Market, 2=Limit, 3=Stop, 4=Stop Limit"`
-	TransactionType int    `json:"transaction_type" jsonschema:"description=Buy (1) or Sell (2)"`
-	PriceType       int    `json:"price_type" jsonschema:"description=Price type for the order, 1=LMT (Limit), 2=MKT (Market), 3=SLLMT (Stop Loss Limit), 4=SLMKT (Stop Loss Market), 5=DS (Disclosed), 6=TWOLEG (Two Leg), 7=THREEELEG (Three Leg)"`
-	Validity        int    `json:"validity" jsonschema:"description=Validity of the order"`
-	DiscQuantity    int    `json:"disclosed_quantity" jsonschema:"description=Disclosed quantity for the order"`
-	IsAMO           bool   `json:"is_amo" jsonschema:"description=Whether this is an After Market Order"`
+	// Exchange name identifier. NSE=1, NFO=2, BSE=3, BFO=4
+	ExchangeName int `json:"exchange_name" jsonschema:"description=Exchange name identifier, NSE=1, NFO=2, BSE=3, BFO=4"`
+	// Trading token for the security
+	Token string `json:"token" jsonschema:"description=Trading token"`
+	// Symbol to trade (e.g., IOC-EQ)
+	TradingSymbol string `json:"trading_symbol" jsonschema:"description=Symbol to trade"`
+	// Quantity to trade
+	Quantity int `json:"quantity" jsonschema:"description=Quantity to trade"`
+	// Price for the order. REQUIRED for Limit (order_type=2) and Stop Limit (order_type=4) orders. OMIT or set to empty for Market orders.
+	Price string `json:"price" jsonschema:"description=Price for the order. Required for LMT/SL LMT orders."`
+	// Trigger price for stop orders. REQUIRED for Stop (order_type=3) and Stop Limit (order_type=4) orders.
+	TriggerPrice string `json:"trigger_price,omitempty" jsonschema:"description=Trigger price for stop orders"`
+	// Type of order. 1=Market, 2=Limit, 3=Stop, 4=Stop Limit
+	OrderType int `json:"order_type" jsonschema:"description=Type of order, 1=Market, 2=Limit, 3=Stop, 4=Stop Limit"`
+	// Transaction type. 1=Buy, 2=Sell
+	TransactionType int `json:"transaction_type" jsonschema:"description=Buy (1) or Sell (2)"`
+	// Price type for the order. 1=LMT (Limit), 2=MKT (Market), 3=SLLMT (Stop Loss Limit), 4=SLMKT (Stop Loss Market), 5=DS (Disclosed), 6=TWOLEG (Two Leg), 7=THREEELEG (Three Leg)
+	PriceType int `json:"price_type" jsonschema:"description=Price type for the order, 1=LMT (Limit), 2=MKT (Market), 3=SLLMT (Stop Loss Limit), 4=SLMKT (Stop Loss Market), 5=DS (Disclosed), 6=TWOLEG (Two Leg), 7=THREEELEG (Three Leg)"`
+	// Validity of the order (e.g., 1=DAY, 2=IOC, 3=EOS, 4=GTT)
+	Validity int `json:"validity" jsonschema:"description=Validity of the order, 1=DAY, 2=IOC, 3=EOS, 4=GTT"`
+	// Disclosed quantity for the order
+	DiscQuantity int `json:"disclosed_quantity" jsonschema:"description=Disclosed quantity for the order"`
+	// Whether this is an After Market Order
+	IsAMO bool `json:"is_amo" jsonschema:"description=Whether this is an After Market Order"`
 
 	// Protection parameters
-	TargetPrice   string `json:"target_price,omitempty" jsonschema:"description=Target price for the order"`
+	// Target price for the order (optional)
+	TargetPrice string `json:"target_price,omitempty" jsonschema:"description=Target price for the order"`
+	// Stop loss price for the order (optional)
 	StopLossPrice string `json:"stop_loss_price,omitempty" jsonschema:"description=Stop loss price for the order"`
-	TrailPrice    string `json:"trailing_price,omitempty" jsonschema:"description=Trailing price for the order"`
+	// Trailing price for the order (optional)
+	TrailPrice string `json:"trailing_price,omitempty" jsonschema:"description=Trailing price for the order"`
+	// Order source identifier, always 5
+	OrderSource int `json:"order_source" jsonschema:"description=Order source identifier, always 5"`
 }
 
 type Order struct {
@@ -88,7 +122,7 @@ type Leg struct {
 }
 
 type UserOrder struct {
-	OrderSource int `json:"order_source"`
+	OrderSource int `json:"order_source" jsonschema:"enum=5,description=Order source identifier, always 5"`
 	ModifyOrder
 }
 
@@ -133,4 +167,50 @@ type SecurityInfoReq struct {
 type PriceReq struct {
 	Mode    int      `json:"mode"`
 	Symbols []string `json:"symbols"`
+}
+
+type WebsocketURLResponse struct {
+	BaseURL string `json:"base_url"`
+	Body    any    `json:"body"`
+}
+
+type WatchlistReq struct {
+	Name   string  `json:"name" jsonschema:"required,description=Name of the watchlist, pass 'All' to get all watchlists"`
+	Scrips []scrip `json:"instrument,omitempty" jsonschema:"description=Scrips to add to the watchlist"`
+}
+
+type scrip struct {
+	Exchange int    `json:"exchange" jsonschema:"description=Exchange name identifier, NSE=1, NFO=2, BSE=3, BFO=4, check security info result"`
+	Token    string `json:"token" jsonschema:"description=token of the scrip, check security info result"`
+}
+
+func MakePriceReq(symbols []string) *PriceReq {
+	priceReq := &PriceReq{
+		Mode: 3,
+	}
+	for _, symbol := range symbols {
+		if !strings.HasSuffix(symbol, "-EQ") {
+			symbol = symbol + "-EQ"
+		}
+		priceReq.Symbols = append(priceReq.Symbols, "nse:"+symbol)
+	}
+	return priceReq
+}
+
+type placeOrderResponse struct {
+	OrderID       string `json:"order_id"`
+	TradingSymbol string `json:"trading_symbol"`
+	Quantity      int    `json:"quantity"`
+	IsAMO         bool   `json:"is_amo"`
+	Status        string `json:"status"`
+}
+
+type ModifyOrderReq struct {
+	OrderID string `json:"order_id"`
+	OrderReq
+}
+
+type CancelOrderReq struct {
+	OrderType int    `json:"order_type"`
+	OrderID   string `json:"order_id"`
 }
